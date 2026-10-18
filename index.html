@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0e0d">
+  <meta name="description" content="Denver's personal archive — design, development, and things worth exploring.">
+  <title>Denver — Personal Archive</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d0e0d;
+      --surface: #131512;
+      --surface-hover: #191c18;
+      --ink: #eeeee8;
+      --muted: #92968b;
+      --line: #292d27;
+      --accent: #a7b89a;
+      --accent-soft: #20281f;
+      --white: #f7f7f1;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    ::selection { color: var(--bg); background: var(--accent); }
+
+    .page {
+      width: min(100% - 42px, 850px);
+      margin: 0 auto;
+      padding: 35px 0 27px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 21px;
+      border-bottom: 1px solid var(--line);
+    }
+    .wordmark {
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.65px;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      letter-spacing: .25px;
+      text-transform: uppercase;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px #a7b89a30;
+    }
+
+    .profile {
+      display: grid;
+      grid-template-columns: 126px minmax(0, 1fr);
+      align-items: center;
+      gap: 28px;
+      padding: 51px 0 43px;
+    }
+    .avatar-column { min-width: 0; }
+    .avatar {
+      position: relative;
+      display: block;
+      width: 126px;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: #1c201a;
+      cursor: pointer;
+      isolation: isolate;
+    }
+    .avatar img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 700ms cubic-bezier(.2, .65, .25, 1);
+    }
+    .photo-main { opacity: 1; }
+    .photo-alt { opacity: 0; }
+    .avatar:hover .photo-main,
+    .avatar:focus-visible .photo-main,
+    .avatar.is-swapped .photo-main { opacity: 0; }
+    .avatar:hover .photo-alt,
+    .avatar:focus-visible .photo-alt,
+    .avatar.is-swapped .photo-alt { opacity: 1; }
+    .avatar:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+    .photo-hint {
+      display: block;
+      margin-top: 9px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 9px;
+      text-align: center;
+    }
+    .eyebrow, .section-label {
+      color: var(--accent);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      line-height: 1.8;
+      letter-spacing: .55px;
+      text-transform: uppercase;
+    }
+    h1 {
+      margin: 8px 0 9px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(36px, 6vw, 52px);
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: -2.8px;
+    }
+    .role { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.8; }
+    .intro {
+      max-width: 455px;
+      margin: 18px 0 0;
+      color: #b9bcb3;
+      font-size: 13px;
+      line-height: 1.95;
+    }
+    .links { display: flex; flex-wrap: wrap; gap: 17px; margin-top: 20px; }
+    .text-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding-bottom: 3px;
+      border-bottom: 1px solid #555b50;
+      font-size: 11px;
+      font-weight: 600;
+      transition: color 180ms ease, border-color 180ms ease;
+    }
+    .text-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    .tools { padding: 27px 0 31px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 22px; }
+    .section-heading h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 21px;
+      font-weight: 500;
+      letter-spacing: -.8px;
+    }
+    .section-index { color: var(--muted); font-family: "IBM Plex Mono", monospace; font-size: 10px; }
+    .tool-group + .tool-group { margin-top: 24px; }
+    .group-title {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: .45px;
+      text-transform: uppercase;
+    }
+    .tool-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tool {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 11px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: var(--surface);
+      color: #d7d9d1;
+      font-size: 11px;
+      transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+    }
+    .tool:hover { background: var(--surface-hover); border-color: #454c40; transform: translateY(-2px); }
+    .tool-mark { color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 10px; }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 20px;
+      color: #777c72;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 9px;
+      line-height: 1.8;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 520px) {
+      .page { width: calc(100% - 30px); padding-top: 23px; }
+      .profile { grid-template-columns: 88px minmax(0, 1fr); align-items: start; gap: 17px; padding: 37px 0 32px; }
+      .avatar { width: 88px; }
+      h1 { font-size: clamp(30px, 8vw, 40px); letter-spacing: -1.8px; }
+      .eyebrow { font-size: 9px; }
+      .role { font-size: 11px; }
+      .intro { grid-column: 1 / -1; margin-top: 19px; font-size: 12px; }
+      .links { gap: 12px; }
+      .tool { padding: 8px 9px; font-size: 10px; }
+      .footer { flex-wrap: wrap; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="wordmark" href="#profile">denver.log</a>
+      <div class="status"><span class="status-dot"></span><span>Personal archive / 001</span></div>
+    </header>
+
+    <section class="profile" id="profile" aria-labelledby="profile-name">
+      <div class="avatar-column">
+        <button class="avatar" id="avatar" type="button" aria-label="Toggle alternate profile photograph" aria-pressed="false">
+          <img class="photo-main" src="assets/profile.svg" alt="Denver's profile photograph">
+          <img class="photo-alt" src="assets/profile-alt.svg" alt="" aria-hidden="true">
+        </button>
+        <span class="photo-hint">HOVER TO EXPLORE ↗</span>
+      </div>
+
+      <div class="profile-copy">
+        <div class="eyebrow">HELLO, WORLD. I'M</div>
+        <h1 id="profile-name">Denver.</h1>
+        <p class="role">Student · Developer · Visual Creator</p>
+        <p class="intro">Exploring the intersection of design, technology, and curiosity. I create visual experiments, build things for the web, and document what I learn along the way.</p>
+        <div class="links">
+          <!-- Replace the URL below with your own GitHub profile. -->
+          <a class="text-link" href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          <a class="text-link" href="#tools">My toolkit ↓</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="tools" id="tools" aria-labelledby="tools-title">
+      <div class="section-heading">
+        <h2 id="tools-title">Things I work with.</h2>
+        <span class="section-index">01 — TOOLKIT</span>
+      </div>
+
+      <div class="tool-group">
+        <h3 class="group-title">01 / Creative & Design</h3>
+        <div class="tool-list">
+          <span class="tool"><span class="tool-mark">✳</span>Canva</span>
+          <span class="tool"><span class="tool-mark">✳</span>Photoshop</span>
+          <span class="tool"><span class="tool-mark">✳</span>Figma</span>
+          <span class="tool"><span class="tool-mark">✳</span>Kdenlive</span>
+          <span class="tool"><span class="tool-mark">✳</span>DaVinci Resolve</span>
+          <span class="tool"><span class="tool-mark">✳</span>CapCut</span>
+        </div>
+      </div>
+
+      <div class="tool-group">
+        <h3 class="group-title">02 / Development</h3>
+        <div class="tool-list">
+          <span class="tool"><span class="tool-mark">⌘</span>VS Code</span>
+          <span class="tool"><span class="tool-mark">⌘</span>GitHub</span>
+          <span class="tool"><span class="tool-mark">&lt;/&gt;</span>HTML</span>
+          <span class="tool"><span class="tool-mark">{ }</span>JavaScript</span>
+        </div>
+      </div>
+
+      <div class="tool-group">
+        <h3 class="group-title">03 / AI & Research</h3>
+        <div class="tool-list">
+          <span class="tool"><span class="tool-mark">↗</span>Perplexity</span>
+          <span class="tool"><span class="tool-mark">↗</span>Claude</span>
+          <span class="tool"><span class="tool-mark">↗</span>Grok</span>
+          <span class="tool"><span class="tool-mark">↗</span>ChatGPT</span>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>DENVER'S PERSONAL ARCHIVE</span>
+      <span>DESIGNED WITH INTENTION © 2026</span>
+    </footer>
+  </main>
+
+  <script>
+    const avatar = document.getElementById('avatar');
+
+    // Desktop: hover crossfades between the images. Touch: tap toggles them.
+    avatar.addEventListener('click', () => {
+      const swapped = avatar.classList.toggle('is-swapped');
+      avatar.setAttribute('aria-pressed', String(swapped));
+    });
+  </script>
+</body>
+</html>
